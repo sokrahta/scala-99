@@ -9,3 +9,5 @@ def nth[A](n: Int, as: List[A]): A = {
   else go(n, as)
 }
 
+nth(2, List(1,1,2,3,5,8))
+

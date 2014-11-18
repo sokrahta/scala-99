@@ -7,3 +7,5 @@ def reverse[A](as: List[A]): List[A] = {
   go(Nil, as)
 }
 
+reverse(List(1,1,2,3,5,8))
+

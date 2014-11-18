@@ -4,3 +4,5 @@ def penultimate[A](as: List[A]): A = as match {
   case _ => throw new NoSuchElementException
 }
 
+penultimate(List(1,1,2,3,5,8))
+

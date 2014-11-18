@@ -9,3 +9,5 @@ def length[A](as: List[A]): Int = {
   go(0, as)
 }
 
+length(List(1,1,2,3,5,8))
+
