@@ -5,4 +5,4 @@ def last[A](as: List[A]): A = as match {
 }
 
 last(List(1,1,2,3,5,8))
-
+//res0: Int = 8

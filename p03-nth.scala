@@ -10,4 +10,5 @@ def nth[A](n: Int, as: List[A]): A = {
 }
 
 nth(2, List(1,1,2,3,5,8))
+//res0: Int = 2
 

@@ -9,4 +9,5 @@ def compress[A](as: List[A]): List[A] = {
 }
 
 compress(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
+//res0: List[Symbol] = List('a, 'b, 'c, 'a, 'd, 'e)
 
