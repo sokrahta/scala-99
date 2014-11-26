@@ -17,11 +17,18 @@ def combinations[A](n: Int, as: List[A]): List[List[A]] = {
   go(n, as, Nil)
 }
 
-def group3[A](as: List[A]): List[List[List[A]]] = {
-  if (as.length != 9) Nil
-  combinations(9, as).map(cs => List(cs.slice(0,2), cs.slice(2,5), cs.slice(5,9)))
-}
+def group3[A](as: List[A]): List[List[List[A]]] = group(List(2,3,4), as)
 
 group3(List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"))
 //res0: List[List[List[String]]] = List(List(List(Aldo, Beat), List(Carla, David, Evi), List(Flip, Gary, Hugo, Ida)), ...
+
+def group[A](ns: List[Int], as: List[A]): List[List[List[A]]] = ns match {
+  case Nil => List(Nil)
+  case h::t => {
+    combinations(h, as).flatMap( cs => group(t, cs.drop(h)).map(cs::_) )
+  }
+}
+
+group(List(2, 2, 5), List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"))
+//res0: List[List[List[String]]] = List(List(List(Aldo, Beat), List(Carla, David), List(Evi, Flip, Gary, Hugo, Ida)), ...
 
