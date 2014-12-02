@@ -4,6 +4,7 @@ class S99Int(val start: Int) {
   override def toString: String = start.toString
 
   def isPrime: Boolean = (start > 1) && (primes takeWhile {_<=Math.sqrt(start)} forall {start % _ != 0})
+  def isCoprimeTo(other: S99Int): Boolean = (gcd(this, other) == 1)
 }
 
 object S99Int {
@@ -17,6 +18,7 @@ object S99Int {
 
 import S99Int.{int2S99Int, S99Int2Int}
 
-7.isPrime
-S99Int.gcd(36, 63)
+7.isPrime //res0: Boolean = true
+S99Int.gcd(36, 63) //res0: Int = 9
+35.isCoprimeTo(64) //res0: Boolean = true
 
