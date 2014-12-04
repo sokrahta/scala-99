@@ -39,6 +39,11 @@ object S99Int {
     primes takeWhile {_<=ir.max} filter {_>=ir.min} toList
   
   def gcd(a: Int, b: Int): Int = if (b==0) a else gcd(b, a%b)
+
+  def printGoldbachList(ir: Range): Unit =
+    goldbachList(ir) map {y => println(y._1 + " = " + y._2._1 + " + " + y._2._2)}
+  def goldbachList(ir: Range): List[(Int,(Int,Int))] =
+    ir filter {_%2==0} map {x => (x, x.goldbach)} toList
 }
 
 object P38 {
@@ -70,6 +75,8 @@ object Exercises {
     315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
     S99Int.listPrimesinRange(7 to 31) //res0: List[Int] = List(7, 11, 13, 17, 19, 23, 29, 31)
     28.goldbach //res0: (Int, Int) = (5,23)
+    S99Int.goldbachList(9 to 20)
+    S99Int.printGoldbachList(9 to 20) //10 = 3 + 7 //12 = 5 + 7 //14 = 3 + 11 //16 = 3 + 13 //18 = 5 + 13 //20 = 3 + 17
   }
 }
 
