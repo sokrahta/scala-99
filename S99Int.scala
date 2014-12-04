@@ -30,6 +30,8 @@ object S99Int {
   
   val integers = Stream.cons(1, Stream.from(2,1))
   val primes = Stream.cons(2, Stream.from(3,2) filter {_.isPrime})
+  def listPrimesinRange(ir: Range): List[Int] =
+    primes takeWhile {_<=ir.max} filter {_>=ir.min} toList
   
   def gcd(a: Int, b: Int): Int = if (b==0) a else gcd(b, a%b)
 }
@@ -60,4 +62,5 @@ S99Int.gcd(36, 63) //res0: Int = 9
 315.primeFactors //res0: List[Int] = List(3, 3, 5, 7)
 315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
 P38.test(100900)
+S99Int.listPrimesinRange(7 to 31) //res0: List[Int] = List(7, 11, 13, 17, 19, 23, 29, 31)
 
