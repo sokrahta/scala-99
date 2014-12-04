@@ -58,15 +58,21 @@ object P38 {
   }
 }
 
-import S99Int.{int2S99Int, S99Int2Int}
+object Exercises {
+  import S99Int.{int2S99Int, S99Int2Int}
 
-7.isPrime //res0: Boolean = true
-S99Int.gcd(36, 63) //res0: Int = 9
-35.isCoprimeTo(64) //res0: Boolean = true
-10.totient //res0: Int = 4
-315.primeFactors //res0: List[Int] = List(3, 3, 5, 7)
-315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
+  def run  = {
+    7.isPrime //res0: Boolean = true
+    S99Int.gcd(36, 63) //res0: Int = 9
+    35.isCoprimeTo(64) //res0: Boolean = true
+    10.totient //res0: Int = 4
+    315.primeFactors //res0: List[Int] = List(3, 3, 5, 7)
+    315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
+    S99Int.listPrimesinRange(7 to 31) //res0: List[Int] = List(7, 11, 13, 17, 19, 23, 29, 31)
+    28.goldbach //res0: (Int, Int) = (5,23)
+  }
+}
+
 P38.test(100900)
-S99Int.listPrimesinRange(7 to 31) //res0: List[Int] = List(7, 11, 13, 17, 19, 23, 29, 31)
-28.goldbach //res0: (Int, Int) = (5,23)
+Exercises.run
 
