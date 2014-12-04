@@ -22,6 +22,11 @@ class S99Int(val start: Int) {
   }
   def primeFactorMultiplicity: Map[Int,Int] =
     this.primeFactors groupBy(x => x) map {case (x,xs) => x -> xs.length}
+  def goldbach: (Int,Int) =
+    primes find {x => (start-x).isPrime} match {
+      case Some(x) => (x, start-x)
+      case _ => throw new NoSuchElementException
+    }
 }
 
 object S99Int {
@@ -63,4 +68,5 @@ S99Int.gcd(36, 63) //res0: Int = 9
 315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
 P38.test(100900)
 S99Int.listPrimesinRange(7 to 31) //res0: List[Int] = List(7, 11, 13, 17, 19, 23, 29, 31)
+28.goldbach //res0: (Int, Int) = (5,23)
 
