@@ -34,6 +34,23 @@ object S99Int {
   def gcd(a: Int, b: Int): Int = if (b==0) a else gcd(b, a%b)
 }
 
+object P38 {
+  import S99Int._
+
+  def time[A](label: String)(block: => A): A = {
+    val now = System.currentTimeMillis()
+    val ret = block
+    println(label + ": " + (System.currentTimeMillis() - now) + " ms.")
+    ret
+  }
+
+  def test(n: Int) {
+    time("Preload primes") { primes takeWhile { _ <= Math.sqrt(n) } force }
+    time("P34 (" + n + ")") { n.totient1 }
+    time("P37 (" + n + ")") { n.totient }
+  }
+}
+
 import S99Int.{int2S99Int, S99Int2Int}
 
 7.isPrime //res0: Boolean = true
@@ -42,4 +59,5 @@ S99Int.gcd(36, 63) //res0: Int = 9
 10.totient //res0: Int = 4
 315.primeFactors //res0: List[Int] = List(3, 3, 5, 7)
 315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
+P38.test(100900)
 
