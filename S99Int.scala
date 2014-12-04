@@ -5,7 +5,11 @@ class S99Int(val start: Int) {
 
   def isPrime: Boolean = (start > 1) && (primes takeWhile {_<=Math.sqrt(start)} forall {start % _ != 0})
   def isCoprimeTo(other: S99Int): Boolean = (gcd(this, other) == 1)
-  def totient: Int = (integers takeWhile {_<=start} filter {this.isCoprimeTo(_)}).length
+  def totient1: Int = (integers takeWhile {_<=start} filter {this.isCoprimeTo(_)}).length
+  def totient: Int =
+    start.primeFactorMultiplicity.foldLeft(1) { (r,f) =>
+      f match {case (p,m) => r * (p-1) * Math.pow(p, m-1).toInt }
+    }
   def primeFactors: List[Int] = {
     def go(i: Int, acc: List[Int]): List[Int] = {
       if (i <= 1) acc
