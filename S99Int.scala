@@ -16,6 +16,8 @@ class S99Int(val start: Int) {
     }
     go(start, Nil)
   }
+  def primeFactorMultiplicity: Map[Int,Int] =
+    this.primeFactors groupBy(x => x) map {case (x,xs) => x -> xs.length}
 }
 
 object S99Int {
@@ -35,4 +37,5 @@ S99Int.gcd(36, 63) //res0: Int = 9
 35.isCoprimeTo(64) //res0: Boolean = true
 10.totient //res0: Int = 4
 315.primeFactors //res0: List[Int] = List(3, 3, 5, 7)
+315.primeFactorMultiplicity //res0: Map[Int,Int] = Map(3 -> 2, 5 -> 1, 7 -> 1)
 
