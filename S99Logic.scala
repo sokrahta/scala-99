@@ -25,7 +25,6 @@ class S99Logic(a: Boolean) {
 object S99Logic {
   implicit def boolean2S99Logic(a: Boolean): S99Logic = new S99Logic(a)
 
-
   def table2(fname: String, f: (Boolean, Boolean) => Boolean): Unit = {
     def printone(a: String, b: String, r: String) = println("%-5s %-5s %-5s = %s".format(a,fname,b,r))
     printone("A","B","result")
