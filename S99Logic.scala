@@ -32,6 +32,14 @@ object S99Logic {
          b <- List(true,false)}
       {printone(a.toString, b.toString, f(a,b).toString)}
   }
+
+  def gray(n: Int): List[String] = {
+    if (n <= 0) List("")
+    else {
+      val tail = gray(n-tail)
+      (1 map {"0"+_}) ::: (tail map {"1"+_})
+    }
+  }
 }
 
 object Exercises {
@@ -45,6 +53,8 @@ object Exercises {
     table2("xor",  _ xor _)
     table2("impl", _ impl _)
     table2("equ",  _ equ _)
+    gray(1)
+    gray(3) //res0: List[String] = List(000, 001, 011, 010, 110, 111, 101, 100)
   }
 }
 
