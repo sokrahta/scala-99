@@ -10,10 +10,9 @@ object S99Logic {
   def table2(fname: String, f: (Boolean,Boolean) => Boolean): Unit = {
     def printone(a: String, b: String, r: String) = println("%-5s %-5s %-5s = %s".format(a,fname,b,r))
     printone("A","B","result")
-    printone("true","true",f(true,true).toString)
-    printone("true","false",f(true,false).toString)
-    printone("false","true",f(false,true).toString)
-    printone("false","false",f(false,false).toString)
+    for {a <- List(true,false);
+         b <- List(true,false)}
+      {printone(a.toString, b.toString, f(a,b).toString)}
   }
 }
 
