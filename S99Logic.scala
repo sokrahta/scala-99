@@ -40,6 +40,37 @@ object S99Logic {
       (tail map {"0"+_}) ::: (tail map {"1"+_})
     }
   }
+
+  abstract sealed class HTree[+A] {
+    val freq: Int
+    def code: List[(A,String)] = code("")
+    def code(prefix: String): List[(A,String)]
+  }
+  final case class HBlank[A]() extends HTree[A] {
+    val freq: Int = 0
+    def code(prefix: String) = Nil
+  }
+  final case class HNode[A](a: HTree[A], b: HTree[A]) extends HTree[A] {
+    val freq: Int = a.freq + b.freq
+    def code(prefix: String) = a.code(prefix+"0") ::: b.code(prefix+"1")
+  }
+  final case class HLeaf[A](a: A, freq: Int) extends HTree[A] {
+    def code(prefix: String) = List((a, prefix))
+  }
+
+  def huffman[A](as: List[(A,Int)]): List[(A,String)] = {
+    def build(ls: List[HTree[A]]): HTree[A] = {
+      val (leafs, tail) = ls sortBy(_.freq) splitAt(2)
+      leafs match {
+        case a::b::Nil => build(new HNode(a,b) :: tail)
+        case a::_      => a
+        case _         => new HBlank
+      }
+    }
+    val leafs: List[HTree[A]] = as map {case (a,b) => new HLeaf(a,b)}
+    val tree: HTree[A] = build(leafs)
+    tree.code
+  }
 }
 
 object Exercises {
@@ -55,6 +86,8 @@ object Exercises {
     table2("equ",  _ equ _)
     gray(1)
     gray(3) //res0: List[String] = List(000, 001, 011, 010, 110, 111, 101, 100)
+    huffman(List(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5)))
+    //res0: List[String, String] = List((a,0), (b,101), (c,100), (d,111), (e,1101), (f,1100))
   }
 }
 
