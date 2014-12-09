@@ -45,8 +45,14 @@ object Tree {
     case h          => minHbalNodes(h-1)+minHbalNodes(h-2)+1
   }
 
+  def minHbalHeight(n: Int): Int =
+    Stream.from(1).find(minHbalNodes(_) == n).getOrElse(0)
+
   def maxHbalHeight(n: Int): Int =
     Stream.from(1).takeWhile(minHbalNodes(_) <= n).last
+
+  def hbalTreesWithNodes[A](n: Int, a: A): List[Tree[A]] =
+    (minHbalHeight(n) to maxHbalHeight(n)).flatMap(h => hbalTrees(h, a)).toList
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -95,4 +101,6 @@ val hbaltrees = Tree.hbalTrees(3, "x")
 val hbalMinN = Tree.minHbalNodes(3)
 //res0: Int = 4
 val hbalMaxH = Tree.maxHbalHeight(4)
-//res0: Int = 3
+//res1: Int = 3
+val hbaltrees2 = Tree.hbalTreesWithNodes(4, "x")
+//res2: List[Node[String]] = List(T(x T(x T(x . .) .) T(x . .)), T(x T(x . T(x . .)) T(x . .)), ...
