@@ -46,7 +46,9 @@ object Tree {
   }
   def maxHbalNodes(h: Int): Int = 2*h-1
 
-  def minHbalHeight(n: Int): Int = Math.max(0,n)/2+1
+  def minHbalHeight(n: Int): Int =
+    if (n <= 0) 0
+    else minHbalHeight(n / 2) + 1
   def maxHbalHeight(n: Int): Int =
     Stream.from(1).takeWhile(minHbalNodes(_) <= n).last
 
