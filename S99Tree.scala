@@ -50,16 +50,20 @@ object Node {
   def apply[T](value: T): Node[T] = Node(value, End, End)
 }
 
-Tree.cBalanced(4, "x")
+val balanced = Tree.cBalanced(4, "x")
 //res0: List(Node[String]) = List(T(x T(x . .) T(x . T(x . .))), T(x T(x . .) T(x T(x . .) .)), ...
-Node('a', Node('b'), Node('c')).isSymmetric
+val symmetric = Node('a', Node('b'), Node('c')).isSymmetric
 //res0: Boolean = true
 val a = End.addValue(2)
 //a: Node[Int] = T(2 . .)
 val b = a.addValue(3)
 //b: Node[Int] = T(2 . T(3 . .))
-b.addValue(0)
+val c = b.addValue(0)
 //res2: Node[Int] = T(2 T(0 . .) T(3 . .))
-Tree.fromList(List(3, 2, 5, 7, 1))
+val listtree0 = Tree.fromList(List(3, 2, 5, 7, 1))
 //res3: Node[Int] = T(3 T(2 T(1 . .) .) T(5 . T(7 . .)))
+val listtreesym0 = Tree.fromList(List(5, 3, 18, 1, 4, 12, 21)).isSymmetric
+//res4: Boolean = true
+val listtreesym1 = Tree.fromList(List(3, 2, 5, 7, 4)).isSymmetric
+//res5: Boolean = false
 
