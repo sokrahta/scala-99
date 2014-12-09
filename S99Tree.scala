@@ -39,6 +39,11 @@ object Tree {
       big.flatMap(x => lil.flatMap(y => List(Node(a, x, y), Node(a, y, x)) ))
     }
   }
+
+  def minHbalNodes(h: Int): Int = h match {
+    case h if h < 3 => Math.max(0,h)
+    case h          => minHbalNodes(h-1)+minHbalNodes(h-2)+1
+  }
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -84,3 +89,5 @@ val symtree = Tree.symmetricBalancedTrees(5, "x")
 //res0: List[Node[String]] = List(T(x T(x . T(x . .)) T(x T(x . .) .)), T(x T(x T(x . .) .) T(x . T(x . .))))
 val hbaltrees = Tree.hbalTrees(3, "x")
 //res0: List[Node[String]] = List(T(x T(x T(x . .) T(x . .)) T(x T(x . .) T(x . .))), T(x T(x T(x . .) T(x . .)) T(x T(x . .) .)), ...
+val hbalMinN = Tree.minHbalNodes(3)
+//res0: Int = 4
