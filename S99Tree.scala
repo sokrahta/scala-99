@@ -25,6 +25,9 @@ object Tree {
     }
     go(as, End)
   }
+
+  def symmetricBalancedTrees[A](n: Int, a: A): List[Tree[A]] =
+	cBalanced(n, a) filter {_.isSymmetric}
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -66,4 +69,5 @@ val listtreesym0 = Tree.fromList(List(5, 3, 18, 1, 4, 12, 21)).isSymmetric
 //res4: Boolean = true
 val listtreesym1 = Tree.fromList(List(3, 2, 5, 7, 4)).isSymmetric
 //res5: Boolean = false
-
+val symtree = Tree.symmetricBalancedTrees(5, "x")
+//res0: List[Node[String]] = List(T(x T(x . T(x . .)) T(x T(x . .) .)), T(x T(x T(x . .) .) T(x . T(x . .))))
