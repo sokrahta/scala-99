@@ -27,7 +27,18 @@ object Tree {
   }
 
   def symmetricBalancedTrees[A](n: Int, a: A): List[Tree[A]] =
-	cBalanced(n, a) filter {_.isSymmetric}
+    cBalanced(n, a) filter {_.isSymmetric}
+
+  def hbalTrees[A](h: Int, a: A): List[Tree[A]] = h match {
+    case h if h < 1 => List(End)
+    case 1          => List(Node(a))
+    case _          => {
+      val big = hbalTrees(h-1, a)
+      val lil = hbalTrees(h-2, a)
+      big.flatMap(x => big.map(y => Node(a, x, y))) :::
+      big.flatMap(x => lil.flatMap(y => List(Node(a, x, y), Node(a, y, x)) ))
+    }
+  }
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -71,3 +82,5 @@ val listtreesym1 = Tree.fromList(List(3, 2, 5, 7, 4)).isSymmetric
 //res5: Boolean = false
 val symtree = Tree.symmetricBalancedTrees(5, "x")
 //res0: List[Node[String]] = List(T(x T(x . T(x . .)) T(x T(x . .) .)), T(x T(x T(x . .) .) T(x . T(x . .))))
+val hbaltrees = Tree.hbalTrees(3, "x")
+//res0: List[Node[String]] = List(T(x T(x T(x . .) T(x . .)) T(x T(x . .) T(x . .))), T(x T(x T(x . .) T(x . .)) T(x T(x . .) .)), ...
