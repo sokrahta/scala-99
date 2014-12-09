@@ -17,6 +17,14 @@ object Tree {
       subtreeL.flatMap(l => subtreeR.flatMap(r => List(Node(a,l,r), Node(a,r,l)) ) )
     }
   }
+
+  def fromList[A <% Ordered[A]](as: List[A]): Tree[A] = {
+    def go(as: List[A], acc: Tree[A]): Tree[A] = as match {
+      case Nil => acc
+      case h::t => go(t, acc.addValue(h))
+    }
+    go(as, End)
+  }
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -46,10 +54,12 @@ Tree.cBalanced(4, "x")
 //res0: List(Node[String]) = List(T(x T(x . .) T(x . T(x . .))), T(x T(x . .) T(x T(x . .) .)), ...
 Node('a', Node('b'), Node('c')).isSymmetric
 //res0: Boolean = true
-val res0 = End.addValue(2)
-//res0: Node[Int] = T(2 . .)
-val res1 = res0.addValue(3)
-//res1: Node[Int] = T(2 . T(3 . .))
-res1.addValue(0)
+val a = End.addValue(2)
+//a: Node[Int] = T(2 . .)
+val b = a.addValue(3)
+//b: Node[Int] = T(2 . T(3 . .))
+b.addValue(0)
 //res2: Node[Int] = T(2 T(0 . .) T(3 . .))
+Tree.fromList(List(3, 2, 5, 7, 1))
+//res3: Node[Int] = T(3 T(2 T(1 . .) .) T(5 . T(7 . .)))
 
