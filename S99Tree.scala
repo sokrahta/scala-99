@@ -44,10 +44,9 @@ object Tree {
     case h if h < 3 => Math.max(0,h)
     case h          => minHbalNodes(h-1)+minHbalNodes(h-2)+1
   }
+  def maxHbalNodes(h: Int): Int = 2*h-1
 
-  def minHbalHeight(n: Int): Int =
-    Stream.from(1).find(minHbalNodes(_) == n).getOrElse(0)
-
+  def minHbalHeight(n: Int): Int = Math.max(0,n)/2+1
   def maxHbalHeight(n: Int): Int =
     Stream.from(1).takeWhile(minHbalNodes(_) <= n).last
 
