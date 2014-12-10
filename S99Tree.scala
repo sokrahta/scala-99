@@ -6,6 +6,7 @@ sealed abstract class Tree[+T] {
   def leafCount: Int
   def leafList: List[T]
   def internalList: List[T]
+  def atLevel(n: Int): List[T]
 }
 
 object Tree {
@@ -80,6 +81,11 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   def internalList: List[T] =
     if ((left,right) == (End,End)) Nil
     else value :: left.internalList ::: right.internalList
+  def atLevel(n: Int): List[T] = {
+    if (n<1) Nil
+    else if (n==1) List(value)
+    else left.atLevel(n-1) ::: right.atLevel(n-1)
+  }
 }
 
 case object End extends Tree[Nothing] {
@@ -91,6 +97,7 @@ case object End extends Tree[Nothing] {
   def leafCount = 0
   def leafList = Nil
   def internalList = Nil
+  def atLevel(n: Int) = Nil
 }
 
 object Node {
@@ -131,3 +138,5 @@ val internalnodelist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).int
 //res0: List[Char] = List(a, c)
 val nodecount = Node('x', Node('x'), End).nodeCount
 //res0: Int = 2
+val levellist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).atLevel(2)
+//res0: List[Char] = List(b, c)
