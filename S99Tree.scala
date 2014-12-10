@@ -59,6 +59,13 @@ object Tree {
 
   def hbalTreesWithNodes[A](n: Int, a: A): List[Tree[A]] =
     (minHbalHeight(n) to maxHbalHeight(n)).flatMap(h => hbalTrees(h, a)).filter(_.nodeCount == n).toList
+
+  def completeBinaryTree[A](n: Int, a: A): Tree[A] = n match {
+    case n if n <= 0 => End
+    case n if n == 1 => Node(a)
+    case n if n%2==0 => Node(a, completeBinaryTree((n-1)/2+1,a), completeBinaryTree((n-1)/2,a))
+    case n           => Node(a, completeBinaryTree((n-1)/2,a),   completeBinaryTree((n-1)/2,a))
+  }
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -140,3 +147,5 @@ val nodecount = Node('x', Node('x'), End).nodeCount
 //res0: Int = 2
 val levellist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).atLevel(2)
 //res0: List[Char] = List(b, c)
+val cbtree = Tree.completeBinaryTree(6, "x")
+//res0: Node[String] = T(x T(x T(x . .) T(x . .)) T(x T(x . .) .))
