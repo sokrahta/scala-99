@@ -70,7 +70,7 @@ object Tree {
   }
 }
 
-case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
+abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   override def toString = "T(" + value.toString + " " + left.toString + " " + right.toString + ")"
   def isSymmetric: Boolean = left.isMirrorOf(right)
   def isMirrorOf[S](other: Tree[S]): Boolean = other match {
@@ -102,6 +102,9 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   }
 }
 
+case class Node[+T](value: T, left: Tree[T], right: Tree[T])
+    extends TreeNode[T](value: T, left: Tree[T], right: Tree[T]) { }
+
 case object End extends Tree[Nothing] {
   override def toString = "."
   def isSymmetric: Boolean = true
@@ -112,20 +115,19 @@ case object End extends Tree[Nothing] {
   def leafList = Nil
   def internalList = Nil
   def atLevel(n: Int) = Nil
-  def layoutBinaryTreeInt(x: Int, y: Int) = (End, y)
+  def layoutBinaryTreeInt(x: Int, y: Int) = (End, x)
 }
 
 object Node {
   def apply[T](value: T): Node[T] = Node(value, End, End)
 }
 
-//TODO: fix case-to-case inheritance
 case class PositionedNode[+T](
-        override val value: T, 
-        override val left: Tree[T], 
-        override val right: Tree[T], 
-        x: Int, y: Int) 
-        extends Node[T](value, left, right) {
+        value: T,
+        left: Tree[T],
+        right: Tree[T],
+        x: Int, y: Int)
+        extends TreeNode[T](value, left, right) {
   override def toString = s"T[%s,%s](%s %s %s)".format(x,y,value,left,right)
 }
 
