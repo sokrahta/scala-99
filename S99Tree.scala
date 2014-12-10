@@ -9,6 +9,14 @@ sealed abstract class Tree[+T] {
   def atLevel(n: Int): List[T]
   def layoutBinaryTree: Tree[T] = layoutBinaryTreeInt(1, 1)._1
   def layoutBinaryTreeInt(x: Int, y: Int): (Tree[T], Int)
+  def layoutBinaryTree2: Tree[T] = {
+    val d = treeDepth
+    val x0 = (2 to leftDepth).map(x => Math.pow(2, d-x).toInt).reduceLeft(_+_) + 1
+    layoutBinaryTree2Int(x0, 1, d-2)
+  }
+  def layoutBinaryTree2Int(x: Int, y: Int, w: Int): Tree[T]
+  def treeDepth: Int
+  def leftDepth: Int
 }
 
 object Tree {
@@ -100,6 +108,14 @@ abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tre
     val (r, rx) = right.layoutBinaryTreeInt(lx+1, y+1)
     (PositionedNode(value, l, r, lx, y), rx)
   }
+  def layoutBinaryTree2Int(x: Int, y: Int, w: Int): Tree[T] = {
+    PositionedNode(value,
+      left.layoutBinaryTree2Int( x - Math.pow(2,w).toInt, y+1, w-1),
+      right.layoutBinaryTree2Int(x + Math.pow(2,w).toInt, y+1, w-1),
+      x, y)
+  }
+  def treeDepth: Int = Math.max(left.treeDepth, right.treeDepth) + 1
+  def leftDepth: Int = left.leftDepth + 1
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T])
@@ -116,6 +132,9 @@ case object End extends Tree[Nothing] {
   def internalList = Nil
   def atLevel(n: Int) = Nil
   def layoutBinaryTreeInt(x: Int, y: Int) = (End, x)
+  def layoutBinaryTree2Int(x: Int, y: Int, w: Int) = End
+  def treeDepth = 0
+  def leftDepth = 0
 }
 
 object Node {
@@ -170,4 +189,6 @@ val levellist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).atLevel(2)
 val cbtree = Tree.completeBinaryTree(6, "x")
 //res0: Node[String] = T(x T(x T(x . .) T(x . .)) T(x T(x . .) .))
 val pbtree = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree
+//res0: PositionedNode[Char] = T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))
+val pbtree2 = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree2
 //res0: PositionedNode[Char] = T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))
