@@ -3,6 +3,7 @@ sealed abstract class Tree[+T] {
   def isMirrorOf[S](other: Tree[S]): Boolean
   def addValue[U >: T <% Ordered[U]](x: U): Tree[U]
   def leafCount: Int
+  def leafList: List[T]
 }
 
 object Tree {
@@ -70,6 +71,9 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   def leafCount: Int =
     if ((left,right) == (End,End)) 1
     else left.leafCount+right.leafCount
+  def leafList: List[T] =
+    if ((left,right) == (End,End)) List(value)
+    else left.leafList ::: right.leafList
 }
 
 case object End extends Tree[Nothing] {
@@ -78,6 +82,7 @@ case object End extends Tree[Nothing] {
   def isMirrorOf[S](other: Tree[S]): Boolean = {other == End}
   def addValue[U <% Ordered[U]](x: U): Tree[U] = Node(x)
   def leafCount: Int = 0
+  def leafList = List()
 }
 
 object Node {
@@ -112,3 +117,5 @@ val hbaltrees2 = Tree.hbalTreesWithNodes(4, "x")
 //res2: List[Node[String]] = List(T(x T(x T(x . .) .) T(x . .)), T(x T(x . T(x . .)) T(x . .)), ...
 val leafcount = Node('x', Node('x'), End).leafCount
 //res0: Int = 1
+val leaflist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).leafList
+//res0: List[Char] = List(b, d, e)
