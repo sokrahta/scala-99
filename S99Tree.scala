@@ -2,6 +2,7 @@ sealed abstract class Tree[+T] {
   def isSymmetric: Boolean
   def isMirrorOf[S](other: Tree[S]): Boolean
   def addValue[U >: T <% Ordered[U]](x: U): Tree[U]
+  def nodeCount: Int
   def leafCount: Int
   def leafList: List[T]
   def internalList: List[T]
@@ -69,6 +70,7 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   def addValue[U >: T <% Ordered[U]](x: U): Tree[U] = {
     if (value > x) Node(value, left.addValue(x), right) else Node(value, left, right.addValue(x))
   }
+  def nodeCount: Int = 1 + left.nodeCount + right.nodeCount
   def leafCount: Int =
     if ((left,right) == (End,End)) 1
     else left.leafCount+right.leafCount
@@ -85,7 +87,8 @@ case object End extends Tree[Nothing] {
   def isSymmetric: Boolean = true
   def isMirrorOf[S](other: Tree[S]): Boolean = {other == End}
   def addValue[U <% Ordered[U]](x: U): Tree[U] = Node(x)
-  def leafCount: Int = 0
+  def nodeCount = 0
+  def leafCount = 0
   def leafList = Nil
   def internalList = Nil
 }
@@ -126,3 +129,5 @@ val leaflist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).leafList
 //res0: List[Char] = List(b, d, e)
 val internalnodelist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).internalList
 //res0: List[Char] = List(a, c)
+val nodecount = Node('x', Node('x'), End).nodeCount
+//res0: Int = 2
