@@ -4,6 +4,7 @@ sealed abstract class Tree[+T] {
   def addValue[U >: T <% Ordered[U]](x: U): Tree[U]
   def leafCount: Int
   def leafList: List[T]
+  def internalList: List[T]
 }
 
 object Tree {
@@ -74,6 +75,9 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   def leafList: List[T] =
     if ((left,right) == (End,End)) List(value)
     else left.leafList ::: right.leafList
+  def internalList: List[T] =
+    if ((left,right) == (End,End)) Nil
+    else value :: left.internalList ::: right.internalList
 }
 
 case object End extends Tree[Nothing] {
@@ -82,7 +86,8 @@ case object End extends Tree[Nothing] {
   def isMirrorOf[S](other: Tree[S]): Boolean = {other == End}
   def addValue[U <% Ordered[U]](x: U): Tree[U] = Node(x)
   def leafCount: Int = 0
-  def leafList = List()
+  def leafList = Nil
+  def internalList = Nil
 }
 
 object Node {
@@ -119,3 +124,5 @@ val leafcount = Node('x', Node('x'), End).leafCount
 //res0: Int = 1
 val leaflist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).leafList
 //res0: List[Char] = List(b, d, e)
+val internalnodelist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).internalList
+//res0: List[Char] = List(a, c)
