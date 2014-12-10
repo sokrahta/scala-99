@@ -57,7 +57,7 @@ object Tree {
     Stream.from(1).takeWhile(minHbalNodes(_) <= n).last
 
   def hbalTreesWithNodes[A](n: Int, a: A): List[Tree[A]] =
-    (minHbalHeight(n) to maxHbalHeight(n)).flatMap(h => hbalTrees(h, a)).toList
+    (minHbalHeight(n) to maxHbalHeight(n)).flatMap(h => hbalTrees(h, a)).filter(_.nodeCount == n).toList
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
