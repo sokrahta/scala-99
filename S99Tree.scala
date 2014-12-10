@@ -7,6 +7,8 @@ sealed abstract class Tree[+T] {
   def leafList: List[T]
   def internalList: List[T]
   def atLevel(n: Int): List[T]
+  def layoutBinaryTree: Tree[T] = layoutBinaryTreeInt(1, 1)._1
+  def layoutBinaryTreeInt(x: Int, y: Int): (Tree[T], Int)
 }
 
 object Tree {
@@ -93,6 +95,11 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
     else if (n==1) List(value)
     else left.atLevel(n-1) ::: right.atLevel(n-1)
   }
+  def layoutBinaryTreeInt(x: Int, y: Int): (Tree[T], Int) = {
+    val (l, lx) = left.layoutBinaryTreeInt(x, y+1)
+    val (r, rx) = right.layoutBinaryTreeInt(lx+1, y+1)
+    (PositionedNode(value, l, r, lx, y), rx)
+  }
 }
 
 case object End extends Tree[Nothing] {
@@ -105,10 +112,21 @@ case object End extends Tree[Nothing] {
   def leafList = Nil
   def internalList = Nil
   def atLevel(n: Int) = Nil
+  def layoutBinaryTreeInt(x: Int, y: Int) = (End, y)
 }
 
 object Node {
   def apply[T](value: T): Node[T] = Node(value, End, End)
+}
+
+//TODO: fix case-to-case inheritance
+case class PositionedNode[+T](
+        override val value: T, 
+        override val left: Tree[T], 
+        override val right: Tree[T], 
+        x: Int, y: Int) 
+        extends Node[T](value, left, right) {
+  override def toString = s"T[%s,%s](%s %s %s)".format(x,y,value,left,right)
 }
 
 val balanced = Tree.cBalanced(4, "x")
@@ -149,3 +167,5 @@ val levellist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).atLevel(2)
 //res0: List[Char] = List(b, c)
 val cbtree = Tree.completeBinaryTree(6, "x")
 //res0: Node[String] = T(x T(x T(x . .) T(x . .)) T(x T(x . .) .))
+val pbtree = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree
+//res0: PositionedNode[Char] = T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))
