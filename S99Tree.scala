@@ -2,6 +2,7 @@ sealed abstract class Tree[+T] {
   def isSymmetric: Boolean
   def isMirrorOf[S](other: Tree[S]): Boolean
   def addValue[U >: T <% Ordered[U]](x: U): Tree[U]
+  def leafCount: Int
 }
 
 object Tree {
@@ -66,6 +67,9 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   def addValue[U >: T <% Ordered[U]](x: U): Tree[U] = {
     if (value > x) Node(value, left.addValue(x), right) else Node(value, left, right.addValue(x))
   }
+  def leafCount: Int =
+    if ((left,right) == (End,End)) 1
+    else left.leafCount+right.leafCount
 }
 
 case object End extends Tree[Nothing] {
@@ -73,6 +77,7 @@ case object End extends Tree[Nothing] {
   def isSymmetric: Boolean = true
   def isMirrorOf[S](other: Tree[S]): Boolean = {other == End}
   def addValue[U <% Ordered[U]](x: U): Tree[U] = Node(x)
+  def leafCount: Int = 0
 }
 
 object Node {
@@ -105,3 +110,5 @@ val hbalMaxH = Tree.maxHbalHeight(4)
 //res1: Int = 3
 val hbaltrees2 = Tree.hbalTreesWithNodes(4, "x")
 //res2: List[Node[String]] = List(T(x T(x T(x . .) .) T(x . .)), T(x T(x . T(x . .)) T(x . .)), ...
+val leafcount = Node('x', Node('x'), End).leafCount
+//res0: Int = 1
