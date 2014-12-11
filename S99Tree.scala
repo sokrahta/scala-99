@@ -17,6 +17,10 @@ sealed abstract class Tree[+T] {
   def layoutBinaryTree2Int(x: Int, y: Int, w: Int): Tree[T]
   def treeDepth: Int
   def leftDepth: Int
+  def layoutBinaryTree3: Tree[T] =
+    layoutBinaryTree3Int(bounds.map(_._1).reduceLeft(_ min _) * -1 + 1, 1)
+  def layoutBinaryTree3Int(x: Int, y: Int): Tree[T]
+  def bounds: List[(Int,Int)]
 }
 
 object Tree {
@@ -116,6 +120,30 @@ abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tre
   }
   def treeDepth: Int = Math.max(left.treeDepth, right.treeDepth) + 1
   def leftDepth: Int = left.leftDepth + 1
+  def layoutBinaryTree3Int(x: Int, y: Int): Tree[T] = bounds match {
+    case _ :: (lb,rb) :: _ => PositionedNode(value,
+      left.layoutBinaryTree3Int( x+lb, y+1),
+      right.layoutBinaryTree3Int(x+rb, y+1),
+      x, y)
+    case _ => PositionedNode(value, End, End, x, y)
+  }
+  def bounds: List[(Int, Int)] = {
+    val branchBounds = (left.bounds, right.bounds) match {
+      case (Nil, Nil) => Nil
+      case (lb,  Nil) => lb.map(b => (b._1 -1, b._2 -1))
+      case (Nil, rb ) => rb.map(b => (b._1 +1, b._2 +1))
+      case (lb,  rb ) => {
+        val w = lb.zip(rb).map(e => (e._1._2 - e._2._1)/2+1).reduceLeft(_ max _)
+        lb.map(Some(_)).zipAll(rb.map(Some(_)), None, None).map(_ match {
+          case (Some((a,b)), Some((c,d))) => (a-w, d+w)
+          case (Some((a,b)), None)        => (a-w, b-w)
+          case (None,        Some((c,d))) => (c+w, d+w)
+          case (None,        None)        => throw new Exception
+        })
+      }
+    }
+    (0,0) :: branchBounds
+  }
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T])
@@ -135,6 +163,8 @@ case object End extends Tree[Nothing] {
   def layoutBinaryTree2Int(x: Int, y: Int, w: Int) = End
   def treeDepth = 0
   def leftDepth = 0
+  def layoutBinaryTree3Int(x: Int, y: Int) = End
+  def bounds = Nil
 }
 
 object Node {
@@ -188,7 +218,11 @@ val levellist = Node('a', Node('b'), Node('c', Node('d'), Node('e'))).atLevel(2)
 //res0: List[Char] = List(b, c)
 val cbtree = Tree.completeBinaryTree(6, "x")
 //res0: Node[String] = T(x T(x T(x . .) T(x . .)) T(x T(x . .) .))
+val alpha = Tree.fromList(List('n','k','m','c','a','e','d','g','u','p','q'))
 val pbtree = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree
 //res0: PositionedNode[Char] = T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))
 val pbtree2 = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree2
 //res0: PositionedNode[Char] = T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))
+val pbtree3 = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree3
+//res0: PositionedNode[Char] = T[2,1](a T[1,2](b . T[2,3](c . .)) T[3,2](d . .))
+val alpha3 = alpha.layoutBinaryTree3
