@@ -83,7 +83,8 @@ object Tree {
 }
 
 abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
-  override def toString = "T(" + value.toString + " " + left.toString + " " + right.toString + ")"
+  def toString1 = "T(" + value.toString + " " + left.toString + " " + right.toString + ")"
+  override def toString = s"%s(%s,%s)".format(value, left, right)
   def isSymmetric: Boolean = left.isMirrorOf(right)
   def isMirrorOf[S](other: Tree[S]): Boolean = other match {
     case x: Node[S] => left.isMirrorOf(x.right) && right.isMirrorOf(x.left)
@@ -150,7 +151,8 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T])
     extends TreeNode[T](value: T, left: Tree[T], right: Tree[T]) { }
 
 case object End extends Tree[Nothing] {
-  override def toString = "."
+  def toString1 = "."
+  override def toString = ""
   def isSymmetric: Boolean = true
   def isMirrorOf[S](other: Tree[S]): Boolean = {other == End}
   def addValue[U <% Ordered[U]](x: U): Tree[U] = Node(x)
@@ -177,7 +179,8 @@ case class PositionedNode[+T](
         right: Tree[T],
         x: Int, y: Int)
         extends TreeNode[T](value, left, right) {
-  override def toString = s"T[%s,%s](%s %s %s)".format(x,y,value,left,right)
+  override def toString1 = s"T[%s,%s](%s %s %s)".format(x,y,value,left,right)
+  override def toString = s"%s[%s,%s](%s,%s)".format(value,x,y,left,right)
 }
 
 val balanced = Tree.cBalanced(4, "x")
@@ -226,3 +229,5 @@ val pbtree2 = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree2
 val pbtree3 = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree3
 //res0: PositionedNode[Char] = T[2,1](a T[1,2](b . T[2,3](c . .)) T[3,2](d . .))
 val alpha3 = alpha.layoutBinaryTree3
+val ts = Node('a', Node('b', Node('d'), Node('e')), Node('c', End, Node('f', Node('g'), End))).toString
+//res0: String = a(b(d,e),c(,f(g,)))
