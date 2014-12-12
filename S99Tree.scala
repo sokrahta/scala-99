@@ -175,8 +175,8 @@ abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tre
     }
     (0,0) :: branchBounds
   }
-  private val delims: List[Char] = "(,)".toList
-  def preorder: List[Char] = toString.filterNot(c => delims.contains(c)).toList
+
+  def preorder: List[Char] = value.toString.toCharArray.apply(0) :: left.inorder ::: right.inorder
   def inorder: List[Char] = left.inorder ::: List(value.toString.toCharArray.apply(0)) ::: right.inorder
 }
 
