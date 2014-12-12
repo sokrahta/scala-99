@@ -48,6 +48,21 @@ object Tree {
     go(as, End)
   }
 
+  def fromDotString(cs: String): Tree[Char] = {
+    def fromDSPart(csp: List[Char]): (Tree[Char], List[Char]) = {
+      csp match {
+        case Nil    => (End,Nil)
+        case '.'::x => (End,x)
+        case a::x   => {
+          val (l,y) = fromDSPart(x)
+          val (r,z) = fromDSPart(y)
+          (Node(a,l,r),z)
+        }
+      }
+    }
+    fromDSPart(cs.toList)._1
+  }
+
   def symmetricBalancedTrees[A](n: Int, a: A): List[Tree[A]] =
     cBalanced(n, a) filter {_.isSymmetric}
 
@@ -292,3 +307,5 @@ val unambiguous = Tree.preInTree(List('a', 'b', 'd', 'e', 'c', 'f', 'g'), List('
 //res2: Node[Char] = a(b(d,e),c(,f(g,)))
 val tdots = Tree.fromString("a(b(d,e),c(,f(g,)))").toDotString
 //res0: String = abd..e..c.fg...
+val fdots = Tree.fromDotString("abd..e..c.fg...")
+//res1: Node[Char] = a(b(d,e),c(,f(g,)))
