@@ -109,7 +109,10 @@ object Tree {
 
 abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
   def toString1 = "T(" + value.toString + " " + left.toString + " " + right.toString + ")"
-  override def toString = s"%s(%s,%s)".format(value, left, right)
+  override def toString = (left,right) match {
+    case (End, End) => value.toString
+    case _          => s"%s(%s,%s)".format(value, left, right)
+  }
   def isSymmetric: Boolean = left.isMirrorOf(right)
   def isMirrorOf[S](other: Tree[S]): Boolean = other match {
     case x: Node[S] => left.isMirrorOf(x.right) && right.isMirrorOf(x.left)
