@@ -80,6 +80,31 @@ object Tree {
     case n if n%2==0 => Node(a, completeBinaryTree((n-1)/2+1,a), completeBinaryTree((n-1)/2,a))
     case n           => Node(a, completeBinaryTree((n-1)/2,a),   completeBinaryTree((n-1)/2,a))
   }
+
+  private val NodeString: scala.util.matching.Regex = "(.)".r
+  private val TreeString: scala.util.matching.Regex = "(.)[(](.+)[)]".r
+  def fromString(s: String): Tree[Char] = {
+    def split(ss: String): (String, String) = {
+      @annotation.tailrec
+      def splitsub(ss: String, i: Int, acc: List[(String, String)]): List[(String, String)] = i match {
+        case -1 => acc
+        case i => {
+          val i2 = ss.indexOf(',', i+1)
+          val (h,t) = ss.splitAt(i)
+          splitsub(ss, i2, (h, t.stripPrefix(",")) :: acc)
+        }
+      }
+      splitsub(ss, 0, Nil).find(x => x._1.count(_=='(') == x._1.count(_==')')).getOrElse(("",""))
+    }
+    s match {
+      case NodeString(value) => Node(value(0))
+      case TreeString(value, children) => {
+        val (l,r) = split(children)
+        Node(value(0), fromString(l), fromString(r))
+      }
+      case _ => End
+    }
+  }
 }
 
 abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -231,3 +256,5 @@ val pbtree3 = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree3
 val alpha3 = alpha.layoutBinaryTree3
 val ts = Node('a', Node('b', Node('d'), Node('e')), Node('c', End, Node('f', Node('g'), End))).toString
 //res0: String = a(b(d,e),c(,f(g,)))
+val fs = Tree.fromString("a(b(d,e),c(,f(g,)))")
+//res1: Node[Char] = a(b(d,e),c(,f(g,)))
