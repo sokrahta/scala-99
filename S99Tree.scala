@@ -107,6 +107,19 @@ object Tree {
       case _ => End
     }
   }
+
+  def preInTree[A <% Ordered[A]](preord: List[A], inord: List[A]): Tree[A] = (preord, inord) match {
+    case (Nil, _) => End
+    case (_, Nil) => End
+    case (preord, inord) => {
+      val (t, b) = preord.splitAt(1)
+      val v = t(0)
+      val i = inord.indexOf(v)
+      val (l, r) = inord.splitAt(i)
+      val r2 = r.drop(1)
+      Node(v, preInTree(b.filter(l.contains(_)), l), preInTree(b.filter(r2.contains(_)), r2))
+    }
+  }
 }
 
 abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -272,3 +285,5 @@ val preorder = Tree.fromString("a(b(d,e),c(,f(g,)))").preorder
 //res0: List[Char] = List(a, b, d, e, c, f, g)
 val inorder = Tree.fromString("a(b(d,e),c(,f(g,)))").inorder
 //res1: List[Char] = List(d, b, e, a, c, g, f)
+val unambiguous = Tree.preInTree(List('a', 'b', 'd', 'e', 'c', 'f', 'g'), List('d', 'b', 'e', 'a', 'c', 'g', 'f'))
+//res2: Node[Char] = a(b(d,e),c(,f(g,)))
