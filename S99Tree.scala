@@ -21,6 +21,7 @@ sealed abstract class Tree[+T] {
     layoutBinaryTree3Int(bounds.map(_._1).reduceLeft(_ min _) * -1 + 1, 1)
   def layoutBinaryTree3Int(x: Int, y: Int): Tree[T]
   def bounds: List[(Int,Int)]
+  def preorder: List[Char]
 }
 
 object Tree {
@@ -173,6 +174,8 @@ abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tre
     }
     (0,0) :: branchBounds
   }
+  private val delims: List[Char] = "(,)".toList
+  def preorder: List[Char] = toString.filterNot(c => delims.contains(c)).toList
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T])
@@ -195,6 +198,7 @@ case object End extends Tree[Nothing] {
   def leftDepth = 0
   def layoutBinaryTree3Int(x: Int, y: Int) = End
   def bounds = Nil
+  def preorder = Nil
 }
 
 object Node {
@@ -261,3 +265,5 @@ val ts = Node('a', Node('b', Node('d'), Node('e')), Node('c', End, Node('f', Nod
 //res0: String = a(b(d,e),c(,f(g,)))
 val fs = Tree.fromString("a(b(d,e),c(,f(g,)))")
 //res1: Node[Char] = a(b(d,e),c(,f(g,)))
+val preorder = Tree.fromString("a(b(d,e),c(,f(g,)))").preorder
+//res0: List[Char] = List(a, b, d, e, c, f, g)
