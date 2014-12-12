@@ -23,6 +23,7 @@ sealed abstract class Tree[+T] {
   def bounds: List[(Int,Int)]
   def preorder: List[Char]
   def inorder: List[Char]
+  def toDotString: String
 }
 
 object Tree {
@@ -128,6 +129,7 @@ abstract class TreeNode[+T](value: T, left: Tree[T], right: Tree[T]) extends Tre
     case (End, End) => value.toString
     case _          => s"%s(%s,%s)".format(value, left, right)
   }
+  def toDotString: String = s"%s%s%s".format(value, left.toDotString, right.toDotString)
   def isSymmetric: Boolean = left.isMirrorOf(right)
   def isMirrorOf[S](other: Tree[S]): Boolean = other match {
     case x: Node[S] => left.isMirrorOf(x.right) && right.isMirrorOf(x.left)
@@ -199,6 +201,7 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T])
 case object End extends Tree[Nothing] {
   def toString1 = "."
   override def toString = ""
+  def toDotString = "."
   def isSymmetric: Boolean = true
   def isMirrorOf[S](other: Tree[S]): Boolean = {other == End}
   def addValue[U <% Ordered[U]](x: U): Tree[U] = Node(x)
@@ -287,3 +290,5 @@ val inorder = Tree.fromString("a(b(d,e),c(,f(g,)))").inorder
 //res1: List[Char] = List(d, b, e, a, c, g, f)
 val unambiguous = Tree.preInTree(List('a', 'b', 'd', 'e', 'c', 'f', 'g'), List('d', 'b', 'e', 'a', 'c', 'g', 'f'))
 //res2: Node[Char] = a(b(d,e),c(,f(g,)))
+val tdots = Tree.fromString("a(b(d,e),c(,f(g,)))").toDotString
+//res0: String = abd..e..c.fg...
