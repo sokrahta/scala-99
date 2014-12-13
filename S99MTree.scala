@@ -5,7 +5,8 @@ case class MTree[+T](value: T, children: List[MTree[T]]) {
 
 object MTree {
   def apply[T](value: T) = new MTree(value, List())
-  def apply[T](value: T, children: List[MTree[T]]) = new MTree(value, children)
+  //apply is provided by case class ctor
+  //def apply[T](value: T, children: List[MTree[T]]) = new MTree(value, children)
 }
 
 val example = MTree('a', List(MTree('f', List(MTree('g'))), MTree('c'), MTree('b', List(MTree('d'), MTree('e')))))
