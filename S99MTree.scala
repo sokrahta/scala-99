@@ -3,6 +3,8 @@ case class MTree[+T](value: T, children: List[MTree[T]]) {
   def toString1 = "M(" + value.toString + " {" + children.map(_.toString).mkString(",") + "})"
   override def toString = s"%s%s^".format(value, children.map(_.toString).mkString(""))
   def nodeCount: Int = 1 + children.map(_.nodeCount).sum
+  def internalPathLength: Int =
+    children.foldLeft(0)((m,a) => m + a.nodeCount + a.internalPathLength)
 }
 
 object MTree {
@@ -36,3 +38,6 @@ val ncount = MTree('a', List(MTree('f'))).nodeCount
 val mtser = MTree('a', List(MTree('f', List(MTree('g'))), MTree('c'), MTree('b', List(MTree('d'), MTree('e'))))).toString
 //res0: String = afg^^c^bd^e^^^
 val mtdes = MTree.string2MTree("afg^^c^bd^e^^^")
+import MTree.string2MTree
+val inpath = "afg^^c^bd^e^^^".internalPathLength
+//res0: Int = 9
