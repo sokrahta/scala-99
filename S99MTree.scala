@@ -5,6 +5,7 @@ case class MTree[+T](value: T, children: List[MTree[T]]) {
   def nodeCount: Int = 1 + children.map(_.nodeCount).sum
   def internalPathLength: Int =
     children.foldLeft(0)((m,a) => m + a.nodeCount + a.internalPathLength)
+  def postorder: List[T] = children.flatMap(_.postorder) ::: value :: Nil
 }
 
 object MTree {
@@ -41,3 +42,5 @@ val mtdes = MTree.string2MTree("afg^^c^bd^e^^^")
 import MTree.string2MTree
 val inpath = "afg^^c^bd^e^^^".internalPathLength
 //res0: Int = 9
+val posto = "afg^^c^bd^e^^^".postorder
+//res0: List[Char] = List(g, f, c, d, e, b, a)
