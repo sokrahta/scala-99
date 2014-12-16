@@ -99,6 +99,16 @@ object Graph extends GraphObjBase {
     }
     g
   }
+
+  def fromString(s: String): Graph[Char,Unit] = {
+    val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
+    val nodes = s1.flatMap(_.split('-')).map(_(0)).distinct
+    val edges = s1.filter(_.indexOf('-') > 0).map(x => {
+      val y = x.split('-')
+      (y(0)(0), y(1)(0), ())
+    })
+    termLabel(nodes,edges)
+  }
 }
 
 object Digraph extends GraphObjBase {
@@ -120,3 +130,6 @@ object Digraph extends GraphObjBase {
 
 val termform = Graph.term(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
                           List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h'))).toTermForm
+val gstring = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
+//res0: (List[String], List[(String, String, Unit)]) = (List(d, k, h, c, f, g, b),List((h,g,()), (k,f,()), (f,b,()), (g,h,()), (f,c,()), (b,c,())))
+
