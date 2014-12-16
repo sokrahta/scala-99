@@ -29,6 +29,12 @@ abstract class GraphBase[T, U] {
   def toTermForm: (List[T], List[(T, T, U)]) = {
     (nodes.keys.toList, edges.map(x => (x.n1.value, x.n2.value, x.value)))
   }
+
+  def toAdjacentForm: List[(T, List[(T, U)])] = {
+    nodes.keys.toList.map(x => {
+      (x, edges.filter(_.n1.value == x).map(y => (y.n2.value, y.value)) )
+    })
+  }
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -132,4 +138,5 @@ val termform = Graph.term(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
                           List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h'))).toTermForm
 val gstring = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
 //res0: (List[String], List[(String, String, Unit)]) = (List(d, k, h, c, f, g, b),List((h,g,()), (k,f,()), (f,b,()), (g,h,()), (f,c,()), (b,c,())))
-
+val adjcform = Digraph.termLabel(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
+               List(('b', 'c', 1), ('b', 'f', 2), ('c', 'f', 3), ('f', 'k', 4), ('g', 'h', 5))).toAdjacentForm
