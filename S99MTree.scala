@@ -6,6 +6,10 @@ case class MTree[+T](value: T, children: List[MTree[T]]) {
   def internalPathLength: Int =
     children.foldLeft(0)((m,a) => m + a.nodeCount + a.internalPathLength)
   def postorder: List[T] = children.flatMap(_.postorder) ::: value :: Nil
+  def lispyTree: String = {
+    if (children.isEmpty) value.toString
+    else s"(%s %s)".format(value, children.map(_.lispyTree).mkString(" "))
+  }
 }
 
 object MTree {
@@ -44,3 +48,5 @@ val inpath = "afg^^c^bd^e^^^".internalPathLength
 //res0: Int = 9
 val posto = "afg^^c^bd^e^^^".postorder
 //res0: List[Char] = List(g, f, c, d, e, b, a)
+val lisp = MTree("a", List(MTree("b", List(MTree("c"))))).lispyTree
+//res0: String = (a (b c))
