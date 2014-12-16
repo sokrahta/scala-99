@@ -25,6 +25,10 @@ abstract class GraphBase[T, U] {
     nodes = Map(value -> n) ++ nodes
     n
   }
+
+  def toTermForm: (List[T], List[(T, T, U)]) = {
+    (nodes.keys.toList, edges.map(x => (x.n1.value, x.n2.value, x.value)))
+  }
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -113,3 +117,6 @@ object Digraph extends GraphObjBase {
     g
   }
 }
+
+val termform = Graph.term(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
+                          List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h'))).toTermForm
