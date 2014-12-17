@@ -132,6 +132,16 @@ object Digraph extends GraphObjBase {
     for ((s, a) <- nodes; (d, l) <- a) g.addArc(s, d, l)
     g
   }
+
+  def fromStringLabel(s: String): Digraph[Char,Int] = {
+    val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
+    val nodes = s1.map(_.split('/')(0)).flatMap(_.split('>')).map(_(0)).distinct
+    val edges = s1.filter(_.indexOf('/')>0).map(x => {
+      val y=x.split('/')
+      y.flatMap(_.split('>'))
+    }).map(z => (z(0)(0), z(1)(0), z(2).toInt))
+    termLabel(nodes,edges)
+  }
 }
 
 val termform = Graph.term(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
@@ -140,3 +150,5 @@ val gstring = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
 //res0: (List[String], List[(String, String, Unit)]) = (List(d, k, h, c, f, g, b),List((h,g,()), (k,f,()), (f,b,()), (g,h,()), (f,c,()), (b,c,())))
 val adjcform = Digraph.termLabel(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
                List(('b', 'c', 1), ('b', 'f', 2), ('c', 'f', 3), ('f', 'k', 4), ('g', 'h', 5))).toAdjacentForm
+val dstring = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm
+//res1: List[(String, List[(String, Int)])] = List((m,List((q,7))), (p,List((m,5), (q,9))), (k,List()), (q,List()))
