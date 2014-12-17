@@ -35,6 +35,15 @@ abstract class GraphBase[T, U] {
       (x, edges.filter(_.n1.value == x).map(y => (y.n2.value, y.value)) )
     })
   }
+
+  def findPaths(a: T, b: T): List[List[T]] = {
+    //@annotation.tailrec
+    def go(c: T, acc: List[T]): List[List[T]] = {
+      if (b == c) List(c :: acc)
+      else edges.filter(e => e.n1.value == c && !acc.contains(e.n2.value)).flatMap(e => go(e.n2.value, c :: acc))
+    }
+    go(a, Nil).map(_.reverse)
+  }
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -152,3 +161,5 @@ val adjcform = Digraph.termLabel(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
                List(('b', 'c', 1), ('b', 'f', 2), ('c', 'f', 3), ('f', 'k', 4), ('g', 'h', 5))).toAdjacentForm
 val dstring = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm
 //res1: List[(String, List[(String, Int)])] = List((m,List((q,7))), (p,List((m,5), (q,9))), (k,List()), (q,List()))
+val paths1 = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'q')
+//res0: List[List[String]] = List(List(p, q), List(p, m, q))
