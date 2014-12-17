@@ -40,9 +40,17 @@ abstract class GraphBase[T, U] {
     //@annotation.tailrec
     def go(c: T, acc: List[T]): List[List[T]] = {
       if (b == c) List(c :: acc)
-      else edges.filter(e => e.n1.value == c && !acc.contains(e.n2.value)).flatMap(e => go(e.n2.value, c :: acc))
+      else {
+        val nc = nodes(c)
+        nc.adj.map(edgeTarget(_,nc).get).filter(n => !acc.contains(n.value)).flatMap(n => go(n.value, c :: acc))
+      }
     }
     go(a, Nil).map(_.reverse)
+  }
+
+  def findCycles(a: T): List[List[T]] = {
+    val n = nodes(a)
+    n.adj.flatMap(e => findPaths(edgeTarget(e,n).get.value, a)).map(a :: _).filter(_.length > 2)
   }
 }
 
@@ -163,3 +171,5 @@ val dstring = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm
 //res1: List[(String, List[(String, Int)])] = List((m,List((q,7))), (p,List((m,5), (q,9))), (k,List()), (q,List()))
 val paths1 = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'q')
 //res0: List[List[String]] = List(List(p, q), List(p, m, q))
+val paths2 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f')
+//res0: List[List[String]] = List(List(f, c, b, f), List(f, b, c, f))
