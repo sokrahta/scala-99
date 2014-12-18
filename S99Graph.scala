@@ -1,6 +1,10 @@
 abstract class GraphBase[T, U] {
   case class Edge(n1: Node, n2: Node, value: U) {
     def toTuple = (n1.value, n2.value, value)
+    override def toString: String = value match {
+      case () => "%s%s%s".format(n1.value, edgeDelim, n2.value)
+      case v  => "%s%s%s%s%s".format(n1.value, edgeDelim, n2.value, labelDelim, v)
+    }
   }
   case class Node(value: T) {
     var adj: List[Edge] = Nil
@@ -24,6 +28,15 @@ abstract class GraphBase[T, U] {
     val n = new Node(value)
     nodes = Map(value -> n) ++ nodes
     n
+  }
+  
+  val edgeDelim: String = ">"
+  val labelDelim: String = "/"
+
+  override def toString: String = {
+    val (edgeStrs, orphans) = edges.foldLeft((Nil: List[String], nodes.values.toList))((r,e) =>
+      (e.toString::r._1, r._2.filter(n => n != e.n1 && n != e.n2)))
+    "[%s]".format((orphans.map(_.value.toString) ::: edgeStrs).mkString(", "))
   }
 
   def toTermForm: (List[T], List[(T, T, U)]) = {
@@ -55,6 +68,8 @@ abstract class GraphBase[T, U] {
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
+  override val edgeDelim: String = "-"
+
   override def equals(o: Any) = o match {
     case g: Graph[_,_] => super.equals(g)
     case _ => false
