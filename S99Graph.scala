@@ -87,14 +87,14 @@ class Graph[T, U] extends GraphBase[T, U] {
     nodes(n2).adj = e :: nodes(n2).adj
   }
 
+  def edgeIntoGraph[T,U](e: Edge, nodes: List[Node]): Boolean =
+    !(nodes.contains(e.n1) == nodes.contains(e.n2))
   def spanningTrees: List[Graph[T,U]] = {
-    def edgeInGraph[T,U](e: Edge, nodes: List[Node]): Boolean =
-      !(nodes.contains(e.n1) == nodes.contains(e.n2))
     // @annotation.tailrec
     def go(gedges: List[Edge], gnodes: List[Node], tree: List[Edge]): List[Graph[T,U]] = {
       if (gnodes == Nil) List(Graph.termLabel(nodes.keys.toList, tree.map(_.toTuple)))
       else if (gedges == Nil) Nil
-      else gedges.filter(edgeInGraph(_, gnodes)).flatMap({ e =>
+      else gedges.filter(edgeIntoGraph(_, gnodes)).flatMap({ e =>
         go(gedges.filter(_!=e), gnodes.filter(edgeTarget(e,_) == None), e :: tree)
       })
     }
@@ -102,6 +102,19 @@ class Graph[T, U] extends GraphBase[T, U] {
   }
   def isTree: Boolean = spanningTrees.length == 1
   def isConnected: Boolean = spanningTrees.length >= 1
+
+  def minimalSpanningTree(implicit f: (U) => Ordered[U]): Graph[T,U] = {
+    @annotation.tailrec
+    def go(gedges: List[Edge], gnodes: List[Node], tree: List[Edge]): Graph[T,U] = {
+      if (gnodes == Nil) Graph.termLabel(nodes.keys.toList, tree.map(_.toTuple))
+      else if (gedges == Nil) new Graph[T,U]
+      else {
+        val me = gedges.filter(edgeIntoGraph(_, gnodes)).sortWith(_.value < _.value).head
+        go(gedges.filter(_!=me), gnodes.filter(edgeTarget(me,_) == None), me :: tree)
+      }
+    }
+    go(edges, nodes.values.toList.tail, Nil)
+  }
 }
 
 class Digraph[T, U] extends GraphBase[T, U] {
@@ -212,6 +225,6 @@ val paths2 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f
 //res0: List[List[String]] = List(List(f, c, b, f), List(f, b, c, f))
 val spans = Graph.fromString("[a-b, b-c, a-c]").spanningTrees
 //res0: List[Graph[String,Unit]] = List([a-b, b-c], [a-c, b-c], [a-b, a-c])
-val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]")//.minimalSpanningTree
+val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree
 //res0: Graph[String,Int] = [a-b/1, b-c/2]
 
