@@ -29,7 +29,7 @@ abstract class GraphBase[T, U] {
     nodes = Map(value -> n) ++ nodes
     n
   }
-  
+
   val edgeDelim: String = ">"
   val labelDelim: String = "/"
 
@@ -123,6 +123,7 @@ class Digraph[T, U] extends GraphBase[T, U] {
 
 abstract class GraphObjBase {
   type GraphClass[T, U]
+
   def addLabel[T](edges: List[(T, T)]) =
     edges.map(v => (v._1, v._2, ()))
   def term[T](nodes: List[T], edges: List[(T,T)]) =
@@ -133,10 +134,35 @@ abstract class GraphObjBase {
   def adjacent[T](nodes: List[(T, List[T])]) =
     adjacentLabel(addAdjacentLabel(nodes))
   def adjacentLabel[T, U](nodes: List[(T, List[(T,U)])]): GraphClass[T, U]
+
+  val edgeDelim: String = ">"
+  val labelDelim: String = "/"
+
+  def fromString(s: String) = {//: GraphBase[Char,Unit] = {
+    val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
+    val nodes = s1.flatMap(_.split(edgeDelim)).map(_(0)).distinct
+    val edges = s1.filter(_.indexOf(edgeDelim) > 0).map(x => {
+      val y = x.split(edgeDelim)
+      (y(0)(0), y(1)(0), ())
+    })
+    termLabel(nodes,edges)
+  }
+
+  def fromStringLabel(s: String) = {//: GraphBase[Char,Int] = {
+    val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
+    val nodes = s1.map(_.split(labelDelim)(0)).flatMap(_.split(edgeDelim)).map(_(0)).distinct
+    val edges = s1.filter(_.indexOf(labelDelim)>0).map(x => {
+      val y=x.split(labelDelim)
+      y.flatMap(_.split(edgeDelim))
+    }).map(z => (z(0)(0), z(1)(0), z(2).toInt))
+    termLabel(nodes,edges)
+  }
 }
 
 object Graph extends GraphObjBase {
   type GraphClass[T, U] = Graph[T, U]
+
+  override val edgeDelim: String = "-"
 
   def termLabel[T, U](nodes: List[T], edges: List[(T,T,U)]) = {
     val g = new Graph[T, U]
@@ -152,16 +178,6 @@ object Graph extends GraphObjBase {
         g.addEdge(n1, n2, l)
     }
     g
-  }
-
-  def fromString(s: String): Graph[Char,Unit] = {
-    val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
-    val nodes = s1.flatMap(_.split('-')).map(_(0)).distinct
-    val edges = s1.filter(_.indexOf('-') > 0).map(x => {
-      val y = x.split('-')
-      (y(0)(0), y(1)(0), ())
-    })
-    termLabel(nodes,edges)
   }
 }
 
@@ -180,16 +196,6 @@ object Digraph extends GraphObjBase {
     for ((s, a) <- nodes; (d, l) <- a) g.addArc(s, d, l)
     g
   }
-
-  def fromStringLabel(s: String): Digraph[Char,Int] = {
-    val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
-    val nodes = s1.map(_.split('/')(0)).flatMap(_.split('>')).map(_(0)).distinct
-    val edges = s1.filter(_.indexOf('/')>0).map(x => {
-      val y=x.split('/')
-      y.flatMap(_.split('>'))
-    }).map(z => (z(0)(0), z(1)(0), z(2).toInt))
-    termLabel(nodes,edges)
-  }
 }
 
 val termform = Graph.term(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
@@ -206,3 +212,6 @@ val paths2 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f
 //res0: List[List[String]] = List(List(f, c, b, f), List(f, b, c, f))
 val spans = Graph.fromString("[a-b, b-c, a-c]").spanningTrees
 //res0: List[Graph[String,Unit]] = List([a-b, b-c], [a-c, b-c], [a-b, a-c])
+val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]")//.minimalSpanningTree
+//res0: Graph[String,Int] = [a-b/1, b-c/2]
+
