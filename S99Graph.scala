@@ -100,6 +100,8 @@ class Graph[T, U] extends GraphBase[T, U] {
     }
     go(edges, nodes.values.toList.tail, Nil).distinct
   }
+  def isTree: Boolean = spanningTrees.length == 1
+  def isConnected: Boolean = spanningTrees.length >= 1
 }
 
 class Digraph[T, U] extends GraphBase[T, U] {
