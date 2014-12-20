@@ -10,6 +10,8 @@ abstract class GraphBase[T, U] {
     var adj: List[Edge] = Nil
     // neighbors are all nodes adjacent to this node.
     def neighbors: List[Node] = adj.map(edgeTarget(_, this).get)
+
+    def degree: Int = adj.length
   }
 
   var nodes: Map[T, Node] = Map()
@@ -227,4 +229,6 @@ val spans = Graph.fromString("[a-b, b-c, a-c]").spanningTrees
 //res0: List[Graph[String,Unit]] = List([a-b, b-c], [a-c, b-c], [a-b, a-c])
 val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree
 //res0: Graph[String,Int] = [a-b/1, b-c/2]
+val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes('a').degree
+//res0: Int = 3
 
