@@ -67,6 +67,9 @@ abstract class GraphBase[T, U] {
     val n = nodes(a)
     n.adj.flatMap(e => findPaths(edgeTarget(e,n).get.value, a)).map(a :: _).filter(_.length > 2)
   }
+
+  def nodesByDegree: List[Node] =
+    nodes.values.map(n => (n, n.degree)).toList.sortBy(-_._2).map(_._1)
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -231,4 +234,6 @@ val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree
 //res0: Graph[String,Int] = [a-b/1, b-c/2]
 val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes('a').degree
 //res0: Int = 3
+val degrees = Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree
+//res1: List[Graph[String,Unit]#Node] = List(Node(a), Node(c), Node(b), Node(d))
 
