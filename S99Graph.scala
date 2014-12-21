@@ -12,6 +12,18 @@ abstract class GraphBase[T, U] {
     def neighbors: List[Node] = adj.map(edgeTarget(_, this).get)
 
     def degree: Int = adj.length
+
+    def nodesByDepth(acc: List[Node]): List[Node] = {
+      def go(acc: List[Node], n: List[Node]): List[Node] = n match {
+        case Nil => Nil
+        case h::t if acc(h) => go(t,n)
+        case h::t         => {
+          val depth = h.nodesByDepth(acc)
+          depth :: go(t, n ++ subnodes)
+        }
+      }
+      go(neighbors, acc + this) ::: List(this)
+    }
   }
 
   var nodes: Map[T, Node] = Map()
@@ -70,6 +82,10 @@ abstract class GraphBase[T, U] {
 
   def nodesByDegree: List[Node] =
     nodes.values.map(n => (n, n.degree)).toList.sortBy(-_._2).map(_._1)
+
+  def nodesByDepthFrom(a: T): List[T] = {
+    nodes(a).nodesByDepth(Nil).map(_.value)
+  }
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -236,4 +252,5 @@ val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes('a').degree
 //res0: Int = 3
 val degrees = Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree
 //res1: List[Graph[String,Unit]#Node] = List(Node(a), Node(c), Node(b), Node(d))
-
+val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d')
+//res0: List[String] = List(c, b, a, d)
