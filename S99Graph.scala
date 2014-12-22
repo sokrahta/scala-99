@@ -14,15 +14,16 @@ abstract class GraphBase[T, U] {
     def degree: Int = adj.length
 
     def nodesByDepth(acc: List[Node]): List[Node] = {
-      def go(acc: List[Node], n: List[Node]): List[Node] = n match {
-        case Nil => Nil
-        case h::t if acc.contains(h) => go(t,n)
-        case h::t                    => {
-          val depth = h.nodesByDepth(h::acc)
-          depth ::: go(t, h::acc)
-        }
+      def go(n: List[Node], acc: List[Node]): List[Node] = n match {
+        case Nil  => Nil
+        case h::t => if (acc.contains(h))
+            go(t, acc)
+          else {
+            val depth = h.nodesByDepth(acc)
+            depth ::: go(t, depth ::: acc)
+          }
       }
-      go(neighbors, this :: acc) ::: List(this)
+      go(neighbors, acc ::: List(this)) ::: List(this)
     }
   }
 
@@ -273,6 +274,6 @@ val degrees = Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree
 //res1: List[Graph[String,Unit]#Node] = List(Node(a), Node(c), Node(b), Node(d))
 val colors = Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes
 //res2: List[(Graph[String,Unit]#Node,Int)] = List((Node(a),1), (Node(b),2), (Node(c), 3), (Node(d), 2))
-val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d')
+val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]")//.nodesByDepthFrom('d')
 //res0: List[String] = List(c, b, a, d)
 
