@@ -83,6 +83,25 @@ abstract class GraphBase[T, U] {
   def nodesByDegree: List[Node] =
     nodes.values.map(n => (n, n.degree)).toList.sortBy(-_._2).map(_._1)
 
+  def colorNodes: List[(Node, Int)] = {
+    //@annotation.tailrec
+    def go(n: List[Node], acc: List[(Node, Int)], color: Int): List[(Node, Int)] = {
+      if (n.isEmpty) acc
+      else {
+        val coloredNodes = acc.map(_._1)
+        val uncoloredNodes = n.filter(r => !coloredNodes.contains(r))
+        val sameColoredNodes = acc.filter(_._2==color).map(_._1)
+        val sameColorTouching = sameColoredNodes.flatMap(_.neighbors).distinct
+        val colorableNodes = uncoloredNodes.filter(r => !sameColorTouching.contains(r))
+        colorableNodes match {
+          case Nil  => go(n, acc, color+1)
+          case h::t => go(n.filter(_!=h), (h,color) :: acc, color)
+        }
+      }
+    }
+    go(nodesByDegree, Nil: List[(Node,Int)], 1)
+  }
+
   def nodesByDepthFrom(a: T): List[T] = {
     nodes(a).nodesByDepth(Nil).map(_.value)
   }
@@ -252,5 +271,8 @@ val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes('a').degree
 //res0: Int = 3
 val degrees = Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree
 //res1: List[Graph[String,Unit]#Node] = List(Node(a), Node(c), Node(b), Node(d))
+//val colors = Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes
+//res2: List[(Graph[String,Unit]#Node,Int)] = List((Node(a),1), (Node(b),2), (Node(c), 3), (Node(d), 2))
 val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d')
 //res0: List[String] = List(c, b, a, d)
+
