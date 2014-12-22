@@ -81,6 +81,28 @@ abstract class GraphBase[T, U] {
     n.adj.flatMap(e => findPaths(edgeTarget(e,n).get.value, a)).map(a :: _).filter(_.length > 2)
   }
 
+  def isIsomorphicTo[X,Y](other: Graph[X,Y]): Boolean = {
+    //@annotation.tailrec
+    def go(tnodes: List[Node], onodes: List[other.Node], m: Map[Node,other.Node]): Boolean =
+      if (tnodes == Nil) isCompleteMapping(m)
+      else listMappings(tnodes, onodes).filter(n => isValidMapping(m+n)).exists(o =>
+        go(tnodes.filter(_ != o._1), onodes.filter(_ != o._2), m+o)
+      )
+    def listMappings(tnodes: List[Node], onodes: List[other.Node]) =
+      tnodes.flatMap(n => onodes.map(o => (n,o)))
+    def isValidMapping(m: Map[Node,other.Node]): Boolean =
+      nodes.values.forall(n =>
+        (!m.contains(n) ||
+          n.neighbors.filter(m.contains).forall(x => m(n).neighbors.contains(m(x)))
+        )
+      )
+    def isCompleteMapping(m: Map[Node,other.Node]): Boolean =
+      nodes.values.forall(n =>
+        Set(n.neighbors.map(m.apply(_)): _*) == Set(m(n).neighbors: _*)
+      )
+    go(nodes.values.toList, other.nodes.values.toList, Map())
+  }
+
   def nodesByDegree: List[Node] =
     nodes.values.map(n => (n, n.degree)).toList.sortBy(-_._2).map(_._1)
 
@@ -268,6 +290,8 @@ val spans = Graph.fromString("[a-b, b-c, a-c]").spanningTrees
 //res0: List[Graph[String,Unit]] = List([a-b, b-c], [a-c, b-c], [a-b, a-c])
 val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree
 //res0: Graph[String,Int] = [a-b/1, b-c/2]
+val iso = Graph.fromString("[a-b]").isIsomorphicTo(Graph.fromString("[5-7]"))
+//res0: Boolean = true
 val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes('a').degree
 //res0: Int = 3
 val degrees = Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree
