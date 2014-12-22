@@ -16,13 +16,13 @@ abstract class GraphBase[T, U] {
     def nodesByDepth(acc: List[Node]): List[Node] = {
       def go(acc: List[Node], n: List[Node]): List[Node] = n match {
         case Nil => Nil
-        case h::t if acc(h) => go(t,n)
-        case h::t         => {
-          val depth = h.nodesByDepth(acc)
-          depth :: go(t, n ++ subnodes)
+        case h::t if acc.contains(h) => go(t,n)
+        case h::t                    => {
+          val depth = h.nodesByDepth(h::acc)
+          depth ::: go(t, h::acc)
         }
       }
-      go(neighbors, acc + this) ::: List(this)
+      go(neighbors, this :: acc) ::: List(this)
     }
   }
 
