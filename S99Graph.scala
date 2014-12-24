@@ -147,6 +147,9 @@ abstract class GraphBase[T, U] {
     }
     go(nodesByDegree, Nil)
   }
+
+  def isBipartite: Boolean =
+    colorNodes.map(_._2).distinct.length == 2
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -321,4 +324,13 @@ val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom("d")
 //res0: List[String] = List(c, b, a, d)
 val connections = Graph.fromString("[a-b, c]").splitGraph
 //res0: List[Graph[String,Unit]] = List([a-b], [c])
+val bp0 = Digraph.fromString("[a>b, c>a, d>b]").isBipartite
+//res0: Boolean = true
+val bp1 = Graph.fromString("[a-b, b-c, c-a]").isBipartite
+//res1: Boolean = false
+val bp2 = Graph.fromString("[a-b, b-c, d]").isBipartite
+//res2: Boolean = true
+val bp3 = Graph.fromString("[a-b, b-c, d, e-f, f-g, g-e, h]").isBipartite
+//res3: Boolean = false
+val bipartite = (bp0, bp1, bp2, bp3)
 
