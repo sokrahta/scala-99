@@ -103,8 +103,9 @@ abstract class GraphBase[T, U] {
     go(nodes.values.toList, other.nodes.values.toList, Map())
   }
 
-  def nodesByDegree: List[Node] =
-    nodes.values.map(n => (n, n.degree)).toList.sortBy(-_._2).map(_._1)
+  def nodesByDegree: List[Node] = {
+    nodes.values.toList.sortBy(_.value.toString).map(n => (n, n.degree)).sortBy(-_._2).map(_._1)
+  }
 
   def colorNodes: List[(Node, Int)] = {
     //@annotation.tailrec
@@ -232,23 +233,23 @@ abstract class GraphObjBase {
   val edgeDelim: String = ">"
   val labelDelim: String = "/"
 
-  def fromString(s: String) = {//: GraphBase[Char,Unit] = {
+  def fromString(s: String) = {
     val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
-    val nodes = s1.flatMap(_.split(edgeDelim)).map(_(0)).distinct
+    val nodes = s1.flatMap(_.split(edgeDelim)).distinct
     val edges = s1.filter(_.indexOf(edgeDelim) > 0).map(x => {
       val y = x.split(edgeDelim)
-      (y(0)(0), y(1)(0), ())
+      (y(0), y(1), ())
     })
     termLabel(nodes,edges)
   }
 
-  def fromStringLabel(s: String) = {//: GraphBase[Char,Int] = {
+  def fromStringLabel(s: String) = {
     val s1 = s.substring(1,s.length-1).split(",").toList.map(_.trim)
-    val nodes = s1.map(_.split(labelDelim)(0)).flatMap(_.split(edgeDelim)).map(_(0)).distinct
+    val nodes = s1.map(_.split(labelDelim)).flatMap(_(0).split(edgeDelim)).distinct
     val edges = s1.filter(_.indexOf(labelDelim)>0).map(x => {
       val y=x.split(labelDelim)
       y.flatMap(_.split(edgeDelim))
-    }).map(z => (z(0)(0), z(1)(0), z(2).toInt))
+    }).map(z => (z(0), z(1), z(2).toInt))
     termLabel(nodes,edges)
   }
 }
@@ -300,9 +301,9 @@ val adjcform = Digraph.termLabel(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
                List(('b', 'c', 1), ('b', 'f', 2), ('c', 'f', 3), ('f', 'k', 4), ('g', 'h', 5))).toAdjacentForm
 val dstring = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm
 //res1: List[(String, List[(String, Int)])] = List((m,List((q,7))), (p,List((m,5), (q,9))), (k,List()), (q,List()))
-val paths1 = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'q')
+val paths1 = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").findPaths("p", "q")
 //res0: List[List[String]] = List(List(p, q), List(p, m, q))
-val paths2 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f')
+val paths2 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles("f")
 //res0: List[List[String]] = List(List(f, c, b, f), List(f, b, c, f))
 val spans = Graph.fromString("[a-b, b-c, a-c]").spanningTrees
 //res0: List[Graph[String,Unit]] = List([a-b, b-c], [a-c, b-c], [a-b, a-c])
@@ -310,13 +311,13 @@ val minspan = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree
 //res0: Graph[String,Int] = [a-b/1, b-c/2]
 val iso = Graph.fromString("[a-b]").isIsomorphicTo(Graph.fromString("[5-7]"))
 //res0: Boolean = true
-val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes('a').degree
+val valency = Graph.fromString("[a-b, b-c, a-c, a-d]").nodes("a").degree
 //res0: Int = 3
 val degrees = Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree
 //res1: List[Graph[String,Unit]#Node] = List(Node(a), Node(c), Node(b), Node(d))
 val colors = Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes
 //res2: List[(Graph[String,Unit]#Node,Int)] = List((Node(a),1), (Node(b),2), (Node(c), 3), (Node(d), 2))
-val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d')
+val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom("d")
 //res0: List[String] = List(c, b, a, d)
 val connections = Graph.fromString("[a-b, c]").splitGraph
 //res0: List[Graph[String,Unit]] = List([a-b], [c])
