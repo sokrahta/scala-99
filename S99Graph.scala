@@ -126,9 +126,7 @@ abstract class GraphBase[T, U] {
     go(nodesByDegree, Nil: List[(Node,Int)], 1)
   }
 
-  def nodesByDepthFrom(a: T): List[T] = {
-    nodes(a).nodesByDepth(Nil).map(_.value)
-  }
+  def nodesByDepthFrom(a: T): List[T] = nodes(a).nodesByDepth(Nil).map(_.value)
 
   def splitGraph: List[GraphBase[T,U]] = {
     @annotation.tailrec
