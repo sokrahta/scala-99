@@ -128,6 +128,24 @@ abstract class GraphBase[T, U] {
   def nodesByDepthFrom(a: T): List[T] = {
     nodes(a).nodesByDepth(Nil).map(_.value)
   }
+
+  def splitGraph: List[GraphBase[T,U]] = {
+    @annotation.tailrec
+    def go(n: List[Node], acc: List[GraphBase[T,U]]): List[GraphBase[T,U]] = n match {
+      case Nil => acc
+      case h::t => {
+        val cnodes = nodesByDepthFrom(h.value)
+        val cedges = edges.filter(e => cnodes.contains(e.n1) || cnodes.contains(e.n2)).
+                      map(e => (e.n1.value, e.n2.value, e.value))
+        val cgraph = this match {
+          case _: Graph[T,U]   =>   Graph.termLabel(cnodes, cedges)
+          case _: Digraph[T,U] => Digraph.termLabel(cnodes, cedges)
+        }
+        go(n.filter(a => !cnodes.contains(a.value)), cgraph :: acc)
+      }
+    }
+    go(nodesByDegree, Nil)
+  }
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -300,4 +318,6 @@ val colors = Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes
 //res2: List[(Graph[String,Unit]#Node,Int)] = List((Node(a),1), (Node(b),2), (Node(c), 3), (Node(d), 2))
 val depth = Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d')
 //res0: List[String] = List(c, b, a, d)
+val connections = Graph.fromString("[a-b, c]").splitGraph
+//res0: List[Graph[String,Unit]] = List([a-b], [c])
 
