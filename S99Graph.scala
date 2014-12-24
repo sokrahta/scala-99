@@ -103,9 +103,8 @@ abstract class GraphBase[T, U] {
     go(nodes.values.toList, other.nodes.values.toList, Map())
   }
 
-  def nodesByDegree: List[Node] = {
+  def nodesByDegree: List[Node] =
     nodes.values.toList.sortBy(_.value.toString).map(n => (n, n.degree)).sortBy(-_._2).map(_._1)
-  }
 
   def colorNodes: List[(Node, Int)] = {
     //@annotation.tailrec
