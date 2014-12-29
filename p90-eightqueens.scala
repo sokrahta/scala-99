@@ -12,8 +12,11 @@ def isValid(queens: List[Int]) = {//: Seq[(Int,Int,Int)] = {
   rows.forall(x=>x) && cols.forall(x=>x) && dups.forall(x=>x) && ddns.forall(x=>x)
 }
 
+def findEightQueens: List[List[Int]] =
+  List(0,1,2,3,4,5,6,7).permutations.filter(isValid(_)).toList
+
 val c0 = isValid(List(3,1,6,2,5,7,4,0))
 val c1 = isValid(List(0,0,0,0,0,0,0,0))
 val c2 = isValid(List(7,1,2,3,4,5,6,0))
 val c3 = isValid(List(7,1,2,3,4,5,6,0).reverse)
-
+val eightQueens = findEightQueens
