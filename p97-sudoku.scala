@@ -79,6 +79,22 @@ def hiddenSingles(p: Array[Array[Char]]): (Int, Array[Array[Char]]) = {
   (count,p)
 }
 
+def nakedPairs(cs: Array[Array[List[Char]]]): (Int,Array[Array[List[Char]]]) = {
+  @annotation.tailrec
+  def go(count: Int, acc: Array[Array[List[Char]]]): (Int,Array[Array[List[Char]]] = {
+    var changes = 0
+    for(n <- 0 to 8) yield {
+      val (r, c, b) = (row(cs,n), col(cs,n), box(cs,n))
+      val rw = r.groupBy(a=>a).filter(a => a._1.length==2 && a._2.length==2)
+      val cw = c.groupBy(a=>a).filter(a => a._1.length==2 && a._2.length==2)
+      val bw = b.groupBy(a=>a).filter(a => a._1.length==2 && a._2.length==2)
+      
+    }
+    if (changes > 0) go(count+changes,cs) else (count,cs)
+  }
+  go(0,cs)
+}
+
 def solve(problem: String): String = {
   var iter: Int = 0
   @annotation.tailrec
