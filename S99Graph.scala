@@ -274,6 +274,10 @@ object Graph extends GraphObjBase {
     }
     g
   }
+
+  def regular(k: Int, n: Int): List[Graph[Char,Unit]] = {
+    Nil
+  }
 }
 
 object Digraph extends GraphObjBase {
@@ -330,4 +334,5 @@ val bp2 = Graph.fromString("[a-b, b-c, d]").isBipartite
 val bp3 = Graph.fromString("[a-b, b-c, d, e-f, f-g, g-e, h]").isBipartite
 //res3: Boolean = false
 val bipartite = (bp0, bp1, bp2, bp3)
+val regular3k6n = Graph.regular(3,6)
 
