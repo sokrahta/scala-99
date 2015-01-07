@@ -337,4 +337,7 @@ val bp3 = Graph.fromString("[a-b, b-c, d, e-f, f-g, g-e, h]").isBipartite
 //res3: Boolean = false
 val bipartite = (bp0, bp1, bp2, bp3)
 val regular3k6n = Graph.regular(3,6)
+//res0: N = 6  K = 2   2 solutions  (21198 inferences)
+//      [1-2, 1-3, 2-3, 4-5, 4-6, 5-6]
+//      [1-2, 1-3, 2-4, 3-5, 4-6, 5-6]
 
