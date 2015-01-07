@@ -275,7 +275,9 @@ object Graph extends GraphObjBase {
     g
   }
 
-  def regular(k: Int, n: Int): List[Graph[Char,Unit]] = {
+  def regular(k: Int, n: Int): List[Graph[Int,Unit]] = {
+    val ns = List.range(1,n).map(new GraphClass[Int,Unit].Node(_))
+    //TODO: create permutations of the edges
     Nil
   }
 }
