@@ -11,21 +11,22 @@ case class SingletonExpression(a: Float) extends Expression {
   def apply = a
 }
 
-case class UnaryExpression(a: Float, op: String) extends Expression {
+case class UnaryExpression(a: Expression, op: String) extends Expression {
   def apply = op match {
-    case "-" => -a
-    case _ => throw new NotImplementedError(s"operator $op not implemented")
+    case "+" => a.apply
+    case "-" => a.apply
+    case _ => throw new NotImplementedError(s"unary operator $op not implemented")
   }
 }
 
-case class BinaryExpression(a: Float, b: Float, op: String) extends Expression {
+case class BinaryExpression(a: Expression, b: Expression, op: String) extends Expression {
   def apply = op match {
-    case "*" => a * b
-    case "/" => a / b
-    case "%" => a % b
-    case "+" => a + b
-    case "-" => a - b
-    case _ => throw new NotImplementedError(s"operator $op not implemented")
+    case "*" => a.apply * b.apply
+    case "/" => a.apply / b.apply
+    case "%" => a.apply % b.apply
+    case "+" => a.apply + b.apply
+    case "-" => a.apply - b.apply
+    case _ => throw new NotImplementedError(s"binary operator $op not implemented")
   }
 }
 
@@ -36,9 +37,13 @@ case class TernaryExpression(a: Float, b: Float, c: Float, op: String) extends E
 object Expression {
   def parse(s: String): Expression = {
     // ORDER OF OPERATIONS MUTHA FUCKA
-    val parensRegex = """(^\(\))*\((.)*(^\(\))*""".r
+    val paRegex = """^\((.)*\)(^\(\))*$""".r
+    val unRegex = """^(-?\d*)$""".r
+    val biRegex = """^$""".r
     s match {
-      case parensRegex(a, b, c) => ???
+      case unRegex(a) => new SingletonExpression(a.toFloat)
+      case biRegex(a, op, b) => ???
+      case paRegex(a, op, b) => ???
       case _ => ???
     }
   }
@@ -77,6 +82,6 @@ def arithmetic(is: List[Int]): List[EqualityExpression] = {
 }
 
 val arith0 = arithmeticIsValid("2-3+5+7 = 11")
-val artih1 = arithmeticIsValid("2 = (3*5+7)/11")
+val arith1 = arithmeticIsValid("2 = (3*5+7)/11")
 val answers = arithmetic(List(2,3,5,7,11))
 //2-3+5+7 = 11 or 2 = (3*5+7)/11 (and ten others!).
