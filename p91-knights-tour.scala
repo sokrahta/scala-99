@@ -4,7 +4,7 @@ type Moves = Seq[Point]
 case class Branch(p: Point, tour: Moves, board: Moves) {}
 
 case class Knight() {
-  private val minimumBoard: Int = 4
+  private val minimumBoard: Int = 5
 
   def moves(p: Point, board: Moves): Moves = {
     val (x,y) = p
@@ -26,7 +26,12 @@ case class Knight() {
 
     @annotation.tailrec
     def go(branches: Seq[Branch]): Seq[Branch] = {
-      if (branches.contains((b: Branch) => b.board.nonEmpty)) go(branches.flatMap(doMoves)) else Seq.empty
+      if (branches.exists((b: Branch) => b.board.nonEmpty)) {
+        val next = branches.flatMap(doMoves)
+        go(next)
+      } else {
+        Seq.empty
+      }
     }
 
     if (n < minimumBoard)
@@ -37,9 +42,9 @@ case class Knight() {
       .filterNot { _ == p }
     val initialTour = Seq(p)
     go(Seq(Branch(p, initialTour, initialBoard)))
-      //.map { case (p, tour, board) if board.isEmpty => tour }
+      .map { case Branch(p, tour, board) if board.isEmpty => tour }
   }
 
 }
 
-(Knight()).tours((0,1), 4).foreach { l => println(l) }
+(Knight()).tours((0,0), 5).foreach { l => println(l) }
